@@ -7,8 +7,8 @@
     <ProjectGuid>{80E43077-3ED9-490A-9706-C64D6C009A9A}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Placeholder</RootNamespace>
-    <AssemblyName>Placeholder</AssemblyName>
+    <RootNamespace>OcelotPlaceholders</RootNamespace>
+    <AssemblyName>OcelotPlaceholders</AssemblyName>
     <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -41,7 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Placeholder.cs" />
+    <Compile Include="PlaceholderEngine.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

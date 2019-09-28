@@ -1,0 +1,5 @@
+source,expected
+"[label:alpha] [label:beta]", "Hello World"
+"[label:[label:alpha]]", "Nested"
+"[label:[label:alpha] [label:beta]]", "Now that's just silly"
+"[label:[label:alpha]:[label:beta]]", "Now that's just silly"

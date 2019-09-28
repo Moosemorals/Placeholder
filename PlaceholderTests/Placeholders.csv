@@ -1,0 +1,9 @@
+source,expected,description
+"No brackets", "No brackets", "Straight string with no placeholder" 
+"[]", "[]", "Empty placeholder" 
+"[bold:hello]", "<strong>hello</strong>", "Bold placeholder"
+"unbalanced]", "unbalanced]", "Unbalanced close square"
+"words [bold:hello] more", "words <strong>hello</strong> more", "Embeded in text"
+"[link:elsewhere:http://example.com/]", "<a href='http://example.com/'>elsewhere</a>", "Simple link"
+"[bold:[link:elsewhere:http://example.com/]]", "<strong><a href='http://example.com/'>elsewhere</a></strong>", "Nested link"
+"[bogus:placeholder]", "[bogus:placeholder]", "Unknown placeholder"
