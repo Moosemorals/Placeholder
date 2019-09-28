@@ -3,3 +3,4 @@ source,expected
 "[label:[label:alpha]]", "Nested"
 "[label:[label:alpha] [label:beta]]", "Now that's just silly"
 "[label:[label:alpha]:[label:beta]]", "Now that's just silly"
+"[bold:[label:[label:alpha]:[label:beta]]]", "<strong>Now that's just silly</strong>"

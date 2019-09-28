@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace OcelotPlaceholders {
 
@@ -37,7 +39,8 @@ namespace OcelotPlaceholders {
         /// <param name="input"></param>
         /// <returns></returns>
         public string Transform(string input) {
-            string result = input;
+            // Escape the input string
+            string result = WebUtility.HtmlEncode(input);
             int offset = 0;
 
             Stack<int> starts = new Stack<int>();
