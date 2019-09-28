@@ -7,3 +7,5 @@ source,expected,description
 "[link:elsewhere:http://example.com/]", "<a href='http://example.com/'>elsewhere</a>", "Simple link"
 "[bold:[link:elsewhere:http://example.com/]]", "<strong><a href='http://example.com/'>elsewhere</a></strong>", "Nested link"
 "[bogus:placeholder]", "[bogus:placeholder]", "Unknown placeholder"
+"<p>Html</p>", "<p>Html</p>", "Embedded html"
+"<p>[bold:html]</p>", "<p><strong>html</strong></p>"
