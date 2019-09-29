@@ -7,7 +7,7 @@ using OcelotPlaceholders;
 
 namespace PlaceholderTests {
     [TestClass]
-    public class SimpleTests {
+    public class PlaceholderTests {
         [TestMethod]
         [DataSource("Microsoft.VisualStudio.TestTools.DataSource.CSV", "Placeholders.csv", "Placeholders#csv", DataAccessMethod.Sequential)]
         public void Basics() {
