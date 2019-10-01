@@ -24,7 +24,7 @@ namespace OcelotPlaceholders {
                 }
             }
 
-            lines.Add(current);
+            lines.Add(current); 
 
             List<string> result = new List<string>();
 
@@ -79,6 +79,21 @@ namespace OcelotPlaceholders {
                 other.Depth = Depth + 1;
                 Children.Add(other);
                 return true;
+            }
+
+            public void Recurse() {
+                if (Children.Count < 2) {
+                    return;
+                }
+
+                StackElement current = Children[0];
+                for (int i = 1; i < Children.Count; i += 1) {
+                    StackElement line = Children[i];
+                    if (!current.AddChild(line)) {
+                        current.Recurse();
+                        current = line;
+                    }
+                }
             }
 
             public override string ToString() {
