@@ -7,116 +7,110 @@ using System.Threading.Tasks;
 
 namespace OcelotPlaceholders {
     public class StackEngine {
+        private static readonly int StackDepth = 3;
+        private static readonly Regex Whitespace = new Regex(@"\s+");
+
         public List<string> Transform(List<string> input) {
-            // Can't stack single lines or empty list.
-            if (input.Count < 2) {
-                return input;
+            Word root = BuildTree(input);
+
+            List<string> result = new List<string>();
+            foreach (Word w in root.Next) {
+                result.AddRange(BuildDisplay(w, 0));
             }
+            return result;
+        }
 
-            List<StackElement> lines = new List<StackElement>();
-            StackElement current = new StackElement(input[0]);
+        private Word BuildTree(List<string> input) {
+            // Phase one - Convert input (a list of strings) into a 'Trie' (https://en.wikipedia.org/wiki/Trie) of words. 
 
-            for (int i = 1; i < input.Count; i += 1) {
-                StackElement line = new StackElement(input[i]);
-                if (!current.AddChild(line)) {
-                    lines.Add(current);
-                    current = line;
+            // Start with an empty string. We'll discard it later
+            // but it gives us somwhere to hold the results.
+            Word root = new Word("");
+            foreach (string line in input) {
+                // Split each line into words
+                string[] words = Whitespace.Split(line);
+                Word current = root;
+
+                // Then walk along the list words
+                foreach (string word in words) {
+                    
+                    // If the current word doesn't have any children (that is, it's the end of a line)
+                    // Or the most recently added child (from the previous line) isn't a match
+                    // then add a new child.
+                    // Otherwise, this line and the previous line match
+                    if (current.Next.Count == 0 || current.Next.Last().Text != word) {
+                        Word next = new Word(word);
+                        current.Next.Add(next);
+                        current = next;
+                    } else {
+                        current = current.Next.Last();
+                    }
                 }
             }
 
-            lines.Add(current); 
+            return root;
+        }
+
+        private List<string> BuildDisplay(Word root, int depth) {
+            // Phase two - turn the Trie into a list of sentances
+
+            StringBuilder phrase = new StringBuilder();
+            // Add indents
+            phrase.Append('\t', depth);
 
             List<string> result = new List<string>();
+            Word current = root;
+            int length = 0;
 
-            while (lines.Count > 0) {
-                StackElement next = lines[0];
-                lines.RemoveAt(0);
-                lines.InsertRange(0, next.Children);
-                result.Add(next.ToString());
+            // While there's exactly one child (zero children 
+            // is end of an input line, more than one child 
+            // is a potential branch point), build up a
+            // prhase from the Trie.
+            while (true) {
+                if (length > 0) {
+                    phrase.Append(" ");
+                }
+                phrase.Append(current.Text);
+                length += 1;
+                if (current.Next.Count != 1) {
+                    break;
+                }
+                current = current.Next[0];
+            }
+
+            if (length < StackDepth && current.Next.Count > 0) {
+                // Busines logic: The constructed phrases must have at least
+                // StackDepth (probably 3) words, unless they're the end of a line.
+                // If we're here, we've got a branch that happened too soon,
+                // so we need to duplicate it and re-build the input lines
+                foreach (Word next in current.Next) {
+                    List<string> partials = BuildDisplay(next, 0);
+                    foreach (string s in partials) { 
+                        result.Add(phrase.ToString() + " " + s);
+                    }
+                }
+            } else {
+                // Add what we've got so far to the result
+                result.Add(phrase.ToString());
+                // If we're at a branch, build up the child phrases and
+                // add them to the result
+                if (current.Next.Count > 0) {
+                    foreach (Word next in current.Next) {
+                        result.AddRange(BuildDisplay(next, depth + 1));
+                    }
+                }
             }
 
             return result;
         }
 
-        internal class StackElement {
-            private static readonly Regex WHITESPACE = new Regex(@"\s+");
-            private readonly string[] parts;
-
-            private StackElement() {
-                Children = new List<StackElement>();
+        internal class Word {
+            internal Word(string word) {
+                Next = new List<Word>();
+                Text = word;
             }
-
-            internal StackElement(StackElement other) : this() {
-                parts = other.parts;
-                MatchStart = other.MatchEnd;
-                MatchEnd = parts.Length;
-                Depth = other.Depth + 1;
-            }
-
-            internal StackElement(string line) : this() {
-                parts = WHITESPACE.Split(line);
-                MatchStart = 0;
-                MatchEnd = parts.Length;
-                Depth = 0;
-            }
-
-            internal bool AddChild(StackElement other) {
-                for (int i = 0; i < this.MatchEnd; i += 1) {
-                    if (this.parts[i] != other.parts[i]) {
-                        if (i < 3) {
-                            return false;
-                        } else {
-                            this.MatchEnd = i;
-                            other.MatchStart = i;
-                            break;
-                        }
-
-                    }
-                }
-                if (Children.Count == 0) {
-                    Children.Add(new StackElement(this));
-                }
-                other.Depth = Depth + 1;
-                Children.Add(other);
-                return true;
-            }
-
-            public void Recurse() {
-                if (Children.Count < 2) {
-                    return;
-                }
-
-                StackElement current = Children[0];
-                for (int i = 1; i < Children.Count; i += 1) {
-                    StackElement line = Children[i];
-                    if (!current.AddChild(line)) {
-                        current.Recurse();
-                        current = line;
-                    }
-                }
-            }
-
-            public override string ToString() {
-                StringBuilder result = new StringBuilder();
-
-                result.Append('\t', Depth);
-
-                bool first = true;
-                for (int i = MatchStart; i < MatchEnd; i += 1) {
-                    if (!first) {
-                        result.Append(" ");
-                    }
-                    result.Append(parts[i]);
-                    first = false;
-                }
-
-                return result.ToString();
-            }
-
-            internal int Depth { get; set; }
-            internal int MatchStart { get; set; }
-            internal int MatchEnd { get; set; }
-            internal List<StackElement> Children { get; set; }
+            internal List<Word> Next { get; }
+            internal string Text { get; }
         }
     }
 }

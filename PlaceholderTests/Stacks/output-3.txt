@@ -1,4 +1,14 @@
-﻿Tell the customer they must do
-	more things
-	extra things
-	three things
+﻿Tell the customer
+	they must do
+		more things
+		extra things
+		three things
+	we must also do things
+	they must do another thing
+Do all the things
+Do other things
+Tell the customer
+	to do more things
+	to do extra things
+	to do three things
+	we must also do things
